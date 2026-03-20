@@ -278,6 +278,40 @@ function App() {
                 </div>
               </div>
 
+              <div className="company-panel">
+                <div className="company-panel-header">
+                  <div className="summary-title">
+                    <Building2 size={18} />
+                    Company-Specific Preparation
+                  </div>
+                  <span className="company-name-chip">{analysis.companyPreparation.companyName}</span>
+                </div>
+
+                <p className="company-style-copy">{analysis.companyPreparation.interviewStyle}</p>
+
+                <div className="company-focus-list">
+                  {analysis.companyPreparation.focusAreas.map((area) => (
+                    <span className="tag" key={area}>{area}</span>
+                  ))}
+                </div>
+
+                <div className="company-columns">
+                  <div className="company-column">
+                    <h3>Preparation Checklist</h3>
+                    <div className="company-list">
+                      {analysis.companyPreparation.prepChecklist.map((item) => (
+                        <div className="company-list-item" key={item}>{item}</div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="company-column">
+                    <h3>Readiness Note</h3>
+                    <div className="company-note">{analysis.companyPreparation.readinessNote}</div>
+                  </div>
+                </div>
+              </div>
+
               <div className="insight-grid">
                 <div className="insight-card">
                   <h3><Target size={18} /> Extracted Skills From Resume</h3>

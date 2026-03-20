@@ -363,6 +363,77 @@ h1 {
   font-size: 0.9rem;
 }
 
+.company-panel {
+  border-radius: 12px;
+  padding: 1.2rem;
+  background: linear-gradient(180deg, #ecfeff 0%, #ffffff 100%);
+  border: 1px solid #a5f3fc;
+}
+
+.company-panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.company-name-chip {
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  background: #cffafe;
+  color: #155e75;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.company-style-copy {
+  color: var(--text-secondary);
+  font-size: 0.94rem;
+}
+
+.company-focus-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.85rem 0 1rem;
+}
+
+.company-columns {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 900px) {
+  .company-columns {
+    grid-template-columns: 1.3fr 0.9fr;
+  }
+}
+
+.company-column h3 {
+  font-size: 0.98rem;
+  color: var(--text-primary);
+  margin-bottom: 0.65rem;
+}
+
+.company-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.company-list-item,
+.company-note {
+  padding: 0.85rem 0.95rem;
+  background: white;
+  border-radius: 10px;
+  border: 1px solid #bae6fd;
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+}
+
 .insight-grid {
   display: grid;
   grid-template-columns: 1fr;

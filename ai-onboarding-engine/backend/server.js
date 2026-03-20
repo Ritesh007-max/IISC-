@@ -66,6 +66,45 @@ const ROLE_SKILL_HINTS = [
     { trigger: ['cloud', 'devops'], skills: ['AWS', 'Docker', 'Git', 'Node.js', 'System Design'] },
 ];
 
+const COMPANY_PREP_PROFILES = [
+    {
+        match: ['google', 'alphabet'],
+        focusAreas: ['Data Structures', 'Problem Solving', 'System Design', 'Communication'],
+        interviewStyle: 'Expect strong coding rounds, problem-solving depth, and clear communication under time pressure.',
+        prepTheme: 'Prioritize DSA reps, tradeoff discussion, and concise explanation of project decisions.',
+    },
+    {
+        match: ['microsoft'],
+        focusAreas: ['Problem Solving', 'System Design', 'Testing', 'Teamwork'],
+        interviewStyle: 'Expect practical engineering discussions, debugging, and collaborative problem solving.',
+        prepTheme: 'Prepare end-to-end project stories, testing discipline, and structured coding rounds.',
+    },
+    {
+        match: ['amazon', 'aws'],
+        focusAreas: ['Leadership', 'System Design', 'REST APIs', 'Communication'],
+        interviewStyle: 'Expect leadership-principle style behavioral rounds plus ownership-focused technical discussion.',
+        prepTheme: 'Prepare STAR stories, architecture decisions, and examples of measurable impact.',
+    },
+    {
+        match: ['meta', 'facebook'],
+        focusAreas: ['JavaScript', 'React', 'System Design', 'Problem Solving'],
+        interviewStyle: 'Expect coding speed, product intuition, and frontend or distributed-system depth depending on role.',
+        prepTheme: 'Sharpen coding fluency and be ready to explain product-facing engineering choices.',
+    },
+    {
+        match: ['netflix'],
+        focusAreas: ['System Design', 'AWS', 'Communication', 'Leadership'],
+        interviewStyle: 'Expect strong ownership, architecture depth, and clarity around scale and tradeoffs.',
+        prepTheme: 'Emphasize decision-making, performance, and production-readiness of your projects.',
+    },
+    {
+        match: ['flipkart', 'swiggy', 'zomato', 'paytm', 'razorpay'],
+        focusAreas: ['Problem Solving', 'System Design', 'SQL', 'Communication'],
+        interviewStyle: 'Expect product-engineering scenarios, scalable backend thinking, and applied coding questions.',
+        prepTheme: 'Prepare practical engineering tradeoffs tied to growth, performance, and product constraints.',
+    },
+];
+
 function unique(list) {
     return [...new Set(list)];
 }
@@ -259,6 +298,55 @@ function computeResumeScore({ resumeText, jobDescriptionText, goalRole, matchedS
     };
 }
 
+function buildCompanyPreparation({ goalCompany, goalRole, targetSkills, matchedSkills, gapSkills }) {
+    const companyName = (goalCompany || '').trim();
+    const normalizedCompany = companyName.toLowerCase();
+    const profile = COMPANY_PREP_PROFILES.find((item) =>
+        item.match.some((term) => normalizedCompany.includes(term))
+    );
+
+    const focusAreas = unique([
+        ...(profile ? profile.focusAreas : []),
+        ...gapSkills.slice(0, 2),
+        ...targetSkills.slice(0, 2),
+    ]).slice(0, 5);
+
+    const strongAreas = focusAreas.filter((area) => matchedSkills.includes(area));
+    const weakAreas = focusAreas.filter((area) => gapSkills.includes(area));
+
+    if (!companyName) {
+        return {
+            companyName: 'General target companies',
+            interviewStyle: 'No company-specific target was provided, so this prep is role-driven.',
+            focusAreas: focusAreas.length > 0 ? focusAreas : targetSkills.slice(0, 4),
+            prepChecklist: [
+                `Tailor your resume stories to ${goalRole || 'the target role'}.`,
+                'Prepare one project walkthrough with architecture, tradeoffs, and outcomes.',
+                'Practice coding and behavioral answers aligned to the role.',
+            ],
+            readinessNote: 'Add a company name to get company-specific emphasis.',
+        };
+    }
+
+    return {
+        companyName,
+        interviewStyle: profile ? profile.interviewStyle : `Expect the interview to prioritize role fit, problem solving, and evidence of project ownership for ${companyName}.`,
+        focusAreas,
+        prepChecklist: [
+            profile ? profile.prepTheme : `Study the engineering expectations and product context of ${companyName}.`,
+            strongAreas.length > 0
+                ? `Lead with strengths in ${strongAreas.slice(0, 3).join(', ')} during interviews.`
+                : 'Strengthen one or two proven strengths that you can discuss with concrete examples.',
+            weakAreas.length > 0
+                ? `Close the biggest gaps first: ${weakAreas.slice(0, 3).join(', ')}.`
+                : 'Turn matching skills into project stories with measurable outcomes.',
+        ],
+        readinessNote: weakAreas.length > 0
+            ? `${weakAreas.length} focus areas still need stronger evidence for ${companyName}.`
+            : `Your current profile already covers the main focus areas for ${companyName}.`,
+    };
+}
+
 function buildRoadmap(gapSkills, resumeSkills, goalRole, goalCompany) {
     if (gapSkills.length === 0) {
         return [
@@ -303,6 +391,13 @@ function analyzeProfile({ resumeText, jobDescriptionText, goalRole, goalCompany,
             matchedSkills,
             targetSkills,
             resumeSkills,
+        }),
+        companyPreparation: buildCompanyPreparation({
+            goalCompany,
+            goalRole,
+            targetSkills,
+            matchedSkills,
+            gapSkills,
         }),
         roadmap: buildRoadmap(gapSkills, resumeSkills, goalRole, goalCompany),
     };
