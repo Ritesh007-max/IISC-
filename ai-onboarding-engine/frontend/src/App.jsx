@@ -312,6 +312,28 @@ function App() {
                 </div>
               </div>
 
+              <div className="projects-panel">
+                <div className="summary-title">
+                  <BookOpen size={18} />
+                  Personalized Project Recommendations
+                </div>
+
+                <div className="project-grid">
+                  {analysis.projectRecommendations.map((project) => (
+                    <div className="project-card" key={project.title}>
+                      <h3>{project.title}</h3>
+                      <p>{project.pitch}</p>
+                      <div className="tag-list">
+                        {project.stack.map((skill) => (
+                          <span className="tag" key={skill}>{skill}</span>
+                        ))}
+                      </div>
+                      <div className="project-outcome">{project.outcome}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               <div className="insight-grid">
                 <div className="insight-card">
                   <h3><Target size={18} /> Extracted Skills From Resume</h3>

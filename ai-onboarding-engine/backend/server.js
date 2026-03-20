@@ -237,7 +237,6 @@ function buildScoreItem(label, score, reason) {
 function computeResumeScore({ resumeText, jobDescriptionText, goalRole, matchedSkills, targetSkills, resumeSkills }) {
     const sections = extractSections(resumeText);
     const projectsText = `${sections.projects || ''} ${sections.experience || ''} ${sections['work experience'] || ''}`;
-    const normalizedResume = normalizeText(resumeText);
     const normalizedTargetContext = normalizeText(`${jobDescriptionText || ''} ${goalRole || ''}`);
     const resumeLines = resumeText.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
     const projectEvidenceSkills = targetSkills.filter((skill) => {
@@ -347,6 +346,63 @@ function buildCompanyPreparation({ goalCompany, goalRole, targetSkills, matchedS
     };
 }
 
+function buildProjectRecommendations({ goalRole, goalCompany, matchedSkills, gapSkills, targetSkills }) {
+    const projectTypes = [];
+    const hasFrontend = ['React', 'JavaScript', 'TypeScript', 'HTML', 'CSS'].some((skill) => targetSkills.includes(skill));
+    const hasBackend = ['Node.js', 'Express', 'REST APIs', 'MongoDB', 'SQL'].some((skill) => targetSkills.includes(skill));
+    const hasCloud = ['AWS', 'Docker', 'System Design'].some((skill) => targetSkills.includes(skill));
+
+    if (hasFrontend && hasBackend) {
+        projectTypes.push({
+            title: 'Full-Stack Product Workflow',
+            pitch: `Build an end-to-end product that reflects ${goalRole || 'your target role'} expectations and can be discussed in interviews for ${goalCompany || 'target companies'}.`,
+            stack: unique(['React', 'Node.js', 'Express', 'MongoDB', ...matchedSkills.slice(0, 2), ...gapSkills.slice(0, 2)]).slice(0, 6),
+            outcome: 'Demonstrates frontend execution, backend APIs, database design, and deployment thinking.',
+        });
+    }
+
+    if (hasBackend) {
+        projectTypes.push({
+            title: 'Backend API and Analytics Service',
+            pitch: 'Create a service with authentication, data persistence, and reporting endpoints that mirror production backend expectations.',
+            stack: unique(['Node.js', 'Express', 'REST APIs', 'SQL', 'Testing', ...gapSkills.slice(0, 2)]).slice(0, 6),
+            outcome: 'Shows API design, validation, testing discipline, and measurable backend ownership.',
+        });
+    }
+
+    if (hasFrontend) {
+        projectTypes.push({
+            title: 'Interactive Frontend Dashboard',
+            pitch: 'Build a responsive dashboard with stateful UI, filtering, forms, and role-specific user flows.',
+            stack: unique(['React', 'JavaScript', 'HTML', 'CSS', 'TypeScript', ...gapSkills.slice(0, 1)]).slice(0, 6),
+            outcome: 'Shows component design, UX reasoning, and implementation quality for product-facing teams.',
+        });
+    }
+
+    if (hasCloud) {
+        projectTypes.push({
+            title: 'Deployable Cloud Architecture Project',
+            pitch: 'Deploy one of your projects with monitoring, containerization, and basic scalability considerations.',
+            stack: unique(['AWS', 'Docker', 'Node.js', 'System Design', ...gapSkills.slice(0, 2)]).slice(0, 6),
+            outcome: 'Shows production readiness and architecture depth beyond local development.',
+        });
+    }
+
+    if (projectTypes.length === 0) {
+        projectTypes.push({
+            title: 'Targeted Portfolio Project',
+            pitch: `Build a project directly aligned with ${goalRole || 'your target role'} and use it as interview evidence.`,
+            stack: unique([...targetSkills.slice(0, 4), ...gapSkills.slice(0, 2), ...matchedSkills.slice(0, 2)]).slice(0, 6),
+            outcome: 'Creates concrete proof of ability for the exact role you are targeting.',
+        });
+    }
+
+    return projectTypes.slice(0, 3).map((project, index) => ({
+        ...project,
+        title: `${index + 1}. ${project.title}`,
+    }));
+}
+
 function buildRoadmap(gapSkills, resumeSkills, goalRole, goalCompany) {
     if (gapSkills.length === 0) {
         return [
@@ -398,6 +454,13 @@ function analyzeProfile({ resumeText, jobDescriptionText, goalRole, goalCompany,
             targetSkills,
             matchedSkills,
             gapSkills,
+        }),
+        projectRecommendations: buildProjectRecommendations({
+            goalRole,
+            goalCompany,
+            matchedSkills,
+            gapSkills,
+            targetSkills,
         }),
         roadmap: buildRoadmap(gapSkills, resumeSkills, goalRole, goalCompany),
     };
