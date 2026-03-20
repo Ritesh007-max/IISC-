@@ -278,6 +278,91 @@ h1 {
   color: var(--text-secondary);
 }
 
+.scorecard-panel {
+  border-radius: 12px;
+  padding: 1.2rem;
+  background: linear-gradient(180deg, #fff7ed 0%, #ffffff 100%);
+  border: 1px solid #fed7aa;
+}
+
+.scorecard-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.scorecard-copy {
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+}
+
+.score-badge {
+  min-width: 120px;
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+  background: #fff;
+  border: 1px solid #fdba74;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.score-badge strong {
+  font-size: 1.4rem;
+  color: #9a3412;
+}
+
+.score-badge span {
+  color: #c2410c;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.score-breakdown {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.85rem;
+}
+
+.score-item {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #fed7aa;
+  border-radius: 10px;
+  padding: 0.9rem;
+}
+
+.score-item-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.45rem;
+  color: var(--text-primary);
+}
+
+.score-bar-track {
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: #ffedd5;
+  overflow: hidden;
+  margin-bottom: 0.55rem;
+}
+
+.score-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #fb923c 0%, #f97316 100%);
+}
+
+.score-item p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
 .insight-grid {
   display: grid;
   grid-template-columns: 1fr;

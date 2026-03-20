@@ -13,123 +13,6 @@ import {
 } from 'lucide-react';
 import './App.css';
 
-const SKILL_CATALOG = [
-  { name: 'JavaScript', aliases: ['javascript', 'js'], roadmap: 'Build interactive browser projects and practice async patterns.' },
-  { name: 'TypeScript', aliases: ['typescript', 'ts'], roadmap: 'Add type-safe components and API contracts in a small app.' },
-  { name: 'React', aliases: ['react', 'react.js', 'reactjs'], roadmap: 'Create reusable UI flows and state-driven components.' },
-  { name: 'Node.js', aliases: ['node.js', 'nodejs', 'node'], roadmap: 'Build REST APIs and middleware with real validation.' },
-  { name: 'Express', aliases: ['express', 'express.js'], roadmap: 'Learn routing, middleware, and request lifecycle design.' },
-  { name: 'MongoDB', aliases: ['mongodb', 'mongo'], roadmap: 'Model collections, indexes, and CRUD-heavy backend features.' },
-  { name: 'SQL', aliases: ['sql', 'mysql', 'postgresql', 'postgres'], roadmap: 'Practice joins, aggregates, and schema design for applications.' },
-  { name: 'Python', aliases: ['python'], roadmap: 'Solve automation tasks and backend exercises with clean modular code.' },
-  { name: 'Java', aliases: ['java'], roadmap: 'Strengthen OOP, collections, and backend fundamentals.' },
-  { name: 'C++', aliases: ['c++', 'cpp'], roadmap: 'Use DSA problems to improve low-level reasoning and performance.' },
-  { name: 'HTML', aliases: ['html'], roadmap: 'Refine semantic layout and structured content authoring.' },
-  { name: 'CSS', aliases: ['css'], roadmap: 'Practice responsive layouts, spacing systems, and component styling.' },
-  { name: 'Git', aliases: ['git', 'github'], roadmap: 'Use branches, pull requests, and clean commit history on every project.' },
-  { name: 'AWS', aliases: ['aws', 'ec2', 's3', 'lambda', 'cloudwatch'], roadmap: 'Deploy one backend and one frontend with logging and storage.' },
-  { name: 'Docker', aliases: ['docker', 'container'], roadmap: 'Containerize an app and run local multi-service environments.' },
-  { name: 'REST APIs', aliases: ['rest api', 'restful api', 'api development', 'backend api'], roadmap: 'Design endpoints with validation, error handling, and auth basics.' },
-  { name: 'GraphQL', aliases: ['graphql'], roadmap: 'Build a schema and compare resolver patterns with REST.' },
-  { name: 'Data Structures', aliases: ['data structures', 'dsa', 'algorithms'], roadmap: 'Practice arrays, trees, graphs, and problem-solving speed.' },
-  { name: 'Problem Solving', aliases: ['problem solving'], roadmap: 'Solve timed coding problems and explain your reasoning clearly.' },
-  { name: 'Communication', aliases: ['communication'], roadmap: 'Summarize technical work clearly in demos, docs, and discussions.' },
-  { name: 'Teamwork', aliases: ['teamwork', 'collaboration'], roadmap: 'Work on shared projects with reviews and task breakdowns.' },
-  { name: 'Leadership', aliases: ['leadership'], roadmap: 'Own a feature end to end and communicate scope, risk, and status.' },
-];
-
-const ROLE_SKILL_HINTS = [
-  { trigger: ['frontend', 'front end', 'ui'], skills: ['JavaScript', 'TypeScript', 'React', 'HTML', 'CSS', 'Git'] },
-  { trigger: ['backend', 'api', 'server'], skills: ['Node.js', 'Express', 'SQL', 'REST APIs', 'Docker', 'Git'] },
-  { trigger: ['full stack', 'fullstack'], skills: ['React', 'Node.js', 'Express', 'MongoDB', 'REST APIs', 'Git'] },
-  { trigger: ['data', 'ml', 'ai'], skills: ['Python', 'SQL', 'Problem Solving'] },
-  { trigger: ['cloud', 'devops'], skills: ['AWS', 'Docker', 'Git', 'Node.js'] },
-];
-
-function extractSkillsFromText(text) {
-  const normalized = text.toLowerCase();
-
-  return SKILL_CATALOG
-    .filter((skill) => skill.aliases.some((alias) => normalized.includes(alias)))
-    .map((skill) => skill.name);
-}
-
-function inferGoalSkills(goalText) {
-  const normalized = goalText.toLowerCase();
-  const inferred = new Set(extractSkillsFromText(goalText));
-
-  ROLE_SKILL_HINTS.forEach((roleHint) => {
-    if (roleHint.trigger.some((term) => normalized.includes(term))) {
-      roleHint.skills.forEach((skill) => inferred.add(skill));
-    }
-  });
-
-  return [...inferred];
-}
-
-function unique(list) {
-  return [...new Set(list)];
-}
-
-function formatGoalSummary(goalRole, goalCompany, goalSkills) {
-  const parts = [];
-
-  if (goalRole.trim()) {
-    parts.push(`Target role: ${goalRole.trim()}`);
-  }
-
-  if (goalCompany.trim()) {
-    parts.push(`Target company: ${goalCompany.trim()}`);
-  }
-
-  if (goalSkills.trim()) {
-    parts.push(`Priority skills: ${goalSkills.trim()}`);
-  }
-
-  return parts.length > 0 ? parts.join(' | ') : 'No career goal provided. Dashboard is based on resume and job description only.';
-}
-
-function buildRoadmap(gapSkills, resumeSkills, goalRole, goalCompany) {
-  if (gapSkills.length === 0) {
-    return [
-      {
-        title: 'Consolidate strengths',
-        description: `Your current profile already overlaps well with the target. Build one polished project and tailor it for ${goalCompany || 'your target companies'}.`,
-      },
-      {
-        title: 'Sharpen interview evidence',
-        description: `Turn ${resumeSkills.slice(0, 3).join(', ') || 'your core skills'} into portfolio stories tied to ${goalRole || 'the target role'}.`,
-      },
-    ];
-  }
-
-  return gapSkills.slice(0, 4).map((skill, index) => {
-    const skillMeta = SKILL_CATALOG.find((item) => item.name === skill);
-    return {
-      title: `Phase ${index + 1}: ${skill}`,
-      description: skillMeta?.roadmap || `Build proof of work in ${skill} and connect it to your target role.`,
-    };
-  });
-}
-
-function analyzeProfile({ resumeText, jobDescriptionText, goalRole, goalCompany, goalSkills }) {
-  const resumeSkills = unique(extractSkillsFromText(resumeText));
-  const jdSkills = unique(extractSkillsFromText(jobDescriptionText));
-  const aspirationalSkills = unique(inferGoalSkills(`${goalRole} ${goalCompany} ${goalSkills}`));
-  const targetSkills = unique([...jdSkills, ...aspirationalSkills]);
-  const matchedSkills = targetSkills.filter((skill) => resumeSkills.includes(skill));
-  const gapSkills = targetSkills.filter((skill) => !resumeSkills.includes(skill));
-
-  return {
-    summary: formatGoalSummary(goalRole, goalCompany, goalSkills),
-    resumeSkills,
-    targetSkills,
-    matchedSkills,
-    gapSkills,
-    roadmap: buildRoadmap(gapSkills, resumeSkills, goalRole, goalCompany),
-  };
-}
-
 function App() {
   const [resume, setResume] = useState(null);
   const [uploadType, setUploadType] = useState('text');
@@ -185,6 +68,9 @@ function App() {
     } else {
       formData.append('jobDescriptionText', jobDescriptionText);
     }
+    formData.append('goalRole', goalRole);
+    formData.append('goalCompany', goalCompany);
+    formData.append('goalSkills', goalSkills);
 
     try {
       const res = await fetch('/upload', {
@@ -211,19 +97,15 @@ function App() {
         throw new Error('Server returned an empty response.');
       }
 
-      const analysis = analyzeProfile({
-        resumeText: data.resumeText,
-        jobDescriptionText: data.jobDescriptionText,
-        goalRole,
-        goalCompany,
-        goalSkills,
-      });
+      if (!data.analysis) {
+        throw new Error('Server did not return analysis data.');
+      }
 
       setResponse(data.message);
       setExtractedData({
         resumeText: data.resumeText,
         jobDescriptionText: data.jobDescriptionText,
-        analysis,
+        analysis: data.analysis,
       });
     } catch (err) {
       setError(err.message || 'Failed to upload files. Please make sure the backend is running.');
@@ -363,6 +245,37 @@ function App() {
                   Goal Context
                 </div>
                 <p>{analysis.summary}</p>
+              </div>
+
+              <div className="scorecard-panel">
+                <div className="scorecard-header">
+                  <div>
+                    <div className="summary-title">
+                      <CheckCircle size={18} />
+                      Resume Score
+                    </div>
+                    <p className="scorecard-copy">This score is based on skills overlap, role alignment, project evidence, and communication signals.</p>
+                  </div>
+                  <div className="score-badge">
+                    <strong>{analysis.scorecard.total}/100</strong>
+                    <span>{analysis.scorecard.band}</span>
+                  </div>
+                </div>
+
+                <div className="score-breakdown">
+                  {analysis.scorecard.breakdown.map((item) => (
+                    <div className="score-item" key={item.label}>
+                      <div className="score-item-head">
+                        <span>{item.label}</span>
+                        <strong>{item.score}</strong>
+                      </div>
+                      <div className="score-bar-track">
+                        <div className="score-bar-fill" style={{ width: `${item.score}%` }} />
+                      </div>
+                      <p>{item.reason}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
 
               <div className="insight-grid">
